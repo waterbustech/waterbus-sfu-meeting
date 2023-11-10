@@ -78,8 +78,7 @@ export class Room {
         ) {
           logger.info(`[NEW TRACK]: track info
           kind: ${track.kind}
-          codec: ${track.codec.mimeType}
-          params: ${track.codec.parameters}`);
+          codec: ${track.codec.mimeType}`);
           this.participants[participantId].media.addTrack(track);
         } else {
           sleep(100);

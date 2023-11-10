@@ -30,7 +30,7 @@ export class Media {
     readonly publisherId: string,
     readonly isVideoEnabled: boolean,
     readonly isAudioEnabled: boolean,
-    readonly e2eeEnabled: boolean,
+    readonly e2eeEnabled: boolean
   ) {
     this.videoEnabled = isVideoEnabled;
     this.audioEnabled = isAudioEnabled;
@@ -45,7 +45,6 @@ export class Media {
   addTrack(rtpTrack: MediaStreamTrack) {
     const track = new Track(rtpTrack, this.transceiver!);
     this.tracks.push(track);
-    logger.info("[MEDIA]: ADDED NEW TRACK");
 
     if (track.track.kind == "video") {
       this.codec = track.track.codec.mimeType;
