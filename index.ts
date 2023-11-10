@@ -158,6 +158,22 @@ io.on(SocketEvent.connection, function (socket: ioInstance.Socket) {
     });
   });
 
+  socket.on(SocketEvent.setCameraTypeCSS, async function (data: any) {
+    const roomId = socket["roomId"];
+    const targetId = socket["participantId"];
+
+    if (!roomId) return;
+
+    const { type } = data;
+
+    rtcManager.setCameraType(socket, type);
+
+    socket.broadcast.to(roomId).emit(SocketEvent.setCameraTypeSSC, {
+      type,
+      participantId: targetId,
+    });
+  });
+
   socket.on(SocketEvent.setVideoEnabledCSS, async function (data: any) {
     const roomId = socket["roomId"];
     const targetId = socket["participantId"];
@@ -228,14 +244,14 @@ function handleLeaveRoom(
   isNeedEmitToRestful: boolean = false
 ) {
   const roomId = socket["roomId"];
-  const parcipantId = socket["participantId"];
+  const participantId = socket["participantId"];
 
   if (!roomId) return;
 
-  rtcManager.leaveRoom(roomId, parcipantId);
+  rtcManager.leaveRoom(roomId, participantId);
 
   socket.broadcast.to(roomId).emit(SocketEvent.participantHasLeftSSC, {
-    targetId: parcipantId,
+    targetId: participantId,
   });
 
   delete socket["roomId"];
@@ -247,13 +263,13 @@ function handleLeaveRoom(
 
   const leaveRoomRequest = new LeaveRoomRequest();
   leaveRoomRequest.setRoomid(roomId);
-  leaveRoomRequest.setParticipantid(parcipantId);
+  leaveRoomRequest.setParticipantid(participantId);
 
   meetingServiceClient.leaveRoom(leaveRoomRequest, (error, res) => {
     if (error) {
-      logger.error(`${parcipantId} leave room ${roomId} grpc failure`);
+      logger.error(`${participantId} leave room ${roomId} grpc failure`);
     } else {
-      logger.info(`${parcipantId} leave room ${roomId} grpc success`);
+      logger.info(`${participantId} leave room ${roomId} grpc success`);
     }
   });
 }

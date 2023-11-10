@@ -15,6 +15,8 @@ const SocketEvent = {
   setE2eeEnabledSSC: "SET_E2EE_ENABLED_SSC",
   setVideoEnabledCSS: "SET_VIDEO_ENABLED_CSS",
   setVideoEnabledSSC: "SET_VIDEO_ENABLED_SSC",
+  setCameraTypeCSS: "SET_CAMERA_TYPE_CSS",
+  setCameraTypeSSC: "SET_CAMERA_TYPE_SSC",
   setAudioEnabledCSS: "SET_AUDIO_ENABLED_CSS",
   setAudioEnabledSSC: "SET_AUDIO_ENABLED_SSC",
   setScreenSharingSSC: "SET_SCREEN_SHARING_SSC",

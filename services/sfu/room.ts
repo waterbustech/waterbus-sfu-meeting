@@ -103,7 +103,7 @@ export class Room {
 
   async subscribe(
     targetId: string,
-    parcipantId: string,
+    participantId: string,
     {
       gotIceCandidate,
     }: { gotIceCandidate: (candidate: RTCIceCandidate) => void }
@@ -112,7 +112,7 @@ export class Room {
 
     if (!targetMedia) return;
 
-    const peerId = this.getSubscriberPeerId(targetId, parcipantId);
+    const peerId = this.getSubscriberPeerId(targetId, participantId);
     const peer = new PeerConnection({
       iceServers: iceServers,
       headerExtensions: {
@@ -152,6 +152,7 @@ export class Room {
 
     return {
       offer: updatedOffer.sdp,
+      cameraType: targetMedia.cameraType,
       videoEnabled: targetMedia.videoEnabled,
       audioEnabled: targetMedia.audioEnabled,
       isScreenSharing: targetMedia.isScreenSharing,
@@ -162,10 +163,10 @@ export class Room {
 
   async setSubscriberDescriptionSubscriber(
     targetId: string,
-    parcipantId: string,
+    participantId: string,
     sdp: string
   ) {
-    const peer = this.getSubscriberPeer(targetId, parcipantId);
+    const peer = this.getSubscriberPeer(targetId, participantId);
 
     if (peer == null) return;
 
@@ -175,7 +176,7 @@ export class Room {
     logger.info(
       `[ADDED REMOTE DESCRIPTION]: ${this.getSubscriberPeerId(
         targetId,
-        parcipantId
+        participantId
       )}`
     );
   }
@@ -196,16 +197,16 @@ export class Room {
 
   async addSubscriberIceCandidate(
     targetId: string,
-    parcipantId: string,
+    participantId: string,
     candidate: RTCIceCandidate
   ) {
-    const peer = this.getSubscriberPeer(targetId, parcipantId);
+    const peer = this.getSubscriberPeer(targetId, participantId);
 
     if (peer == null) return;
 
     await peer.addIceCandidate(candidate);
     logger.info(
-      `[ADDED CANDIDATE]: ${this.getSubscriberPeerId(targetId, parcipantId)}`
+      `[ADDED CANDIDATE]: ${this.getSubscriberPeerId(targetId, participantId)}`
     );
   }
 
@@ -213,28 +214,34 @@ export class Room {
     return Object.keys(this.participants).filter((id) => id != participantId);
   }
 
-  setE2eeEnabled(parcipantId: string, isEnabled: boolean) {
-    if (!this.participants[parcipantId]) return;
+  setE2eeEnabled(participantId: string, isEnabled: boolean) {
+    if (!this.participants[participantId]) return;
 
-    this.participants[parcipantId].media.setE2eeEnabled(isEnabled);
+    this.participants[participantId].media.setE2eeEnabled(isEnabled);
   }
 
-  setVideoEnabled(parcipantId: string, isEnabled: boolean) {
-    if (!this.participants[parcipantId]) return;
+  setCameraType(participantId: string, type: number) {
+    if (!this.participants[participantId]) return;
 
-    this.participants[parcipantId].media.setVideoEnabled(isEnabled);
+    this.participants[participantId].media.setCameraType(type);
   }
 
-  setAudioEnabled(parcipantId: string, isEnabled: boolean) {
-    if (!this.participants[parcipantId]) return;
+  setVideoEnabled(participantId: string, isEnabled: boolean) {
+    if (!this.participants[participantId]) return;
 
-    this.participants[parcipantId].media.setAudioEnabled(isEnabled);
+    this.participants[participantId].media.setVideoEnabled(isEnabled);
   }
 
-  setScreenSharing(parcipantId: string, isSharing: boolean) {
-    if (!this.participants[parcipantId]) return;
+  setAudioEnabled(participantId: string, isEnabled: boolean) {
+    if (!this.participants[participantId]) return;
 
-    this.participants[parcipantId].media.isScreenSharing = isSharing;
+    this.participants[participantId].media.setAudioEnabled(isEnabled);
+  }
+
+  setScreenSharing(participantId: string, isSharing: boolean) {
+    if (!this.participants[participantId]) return;
+
+    this.participants[participantId].media.isScreenSharing = isSharing;
   }
 
   async leave(participantId: string) {
@@ -252,10 +259,10 @@ export class Room {
 
   private getSubscriberPeer(
     targetId: string,
-    parcipantId: string
+    participantId: string
   ): PeerConnection | null {
     const peer =
-      this.subscribers[this.getSubscriberPeerId(targetId, parcipantId)];
+      this.subscribers[this.getSubscriberPeerId(targetId, participantId)];
 
     return peer;
   }
@@ -281,8 +288,8 @@ export class Room {
     return media;
   }
 
-  private getMedia(parcipantId: string): Media | null {
-    const participant = this.participants[parcipantId];
+  private getMedia(participantId: string): Media | null {
+    const participant = this.participants[participantId];
 
     if (!participant) return null;
 
@@ -292,18 +299,18 @@ export class Room {
   // MARK: private related to subscribers
   private getSubscriberPeerId(
     targetId: string,
-    parcipantId: string
+    participantId: string
   ): string | null {
-    return `p_${targetId}_${parcipantId}`;
+    return `p_${targetId}_${participantId}`;
   }
 
   private addSubscriber(peerId: string, peer: PeerConnection) {
     this.subscribers[peerId] = peer;
   }
 
-  private removeAllSubscribersWithTargetId(parcipantId: string) {
+  private removeAllSubscribersWithTargetId(participantId: string) {
     for (const key in Object.keys(this.subscribers)) {
-      if (key.startsWith(`p_${parcipantId}`)) {
+      if (key.startsWith(`p_${participantId}`)) {
         delete this.subscribers[key];
       }
     }

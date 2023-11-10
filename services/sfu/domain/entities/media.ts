@@ -23,6 +23,7 @@ export class Media {
   audioEnabled: boolean = true;
   isE2eeEnabled: boolean = false;
   isScreenSharing: boolean = false;
+  cameraType: number = 0; // 0: front | 1: rear
   codec: String;
 
   constructor(
@@ -78,16 +79,16 @@ export class Media {
     };
   }
 
+  setCameraType(type: number) {
+    this.cameraType = type;
+  }
+
   setVideoEnabled(isEnable: boolean) {
     this.videoEnabled = isEnable;
-
-    console.log(`VIDEO: ${this.videoEnabled}`);
   }
 
   setAudioEnabled(isEnable: boolean) {
     this.audioEnabled = isEnable;
-
-    console.log(`AUDIO: ${this.audioEnabled}`);
   }
 
   setE2eeEnabled(isEnable: boolean) {

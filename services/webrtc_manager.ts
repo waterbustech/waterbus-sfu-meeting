@@ -119,6 +119,16 @@ class WebRTCManager {
     room.setAudioEnabled(participantId, isEnabled);
   }
 
+  async setCameraType(socket, type: number) {
+    const { roomId, participantId } = socket;
+
+    const room = this.rooms[roomId];
+
+    if (!room) return;
+
+    room.setCameraType(participantId, type);
+  }
+
   async setVideoEnabled(socket, isEnabled: boolean) {
     const { roomId, participantId } = socket;
 
@@ -149,11 +159,11 @@ class WebRTCManager {
     room.setScreenSharing(participantId, isSharing);
   }
 
-  async leaveRoom(roomId: string, parcipantId: string) {
+  async leaveRoom(roomId: string, participantId: string) {
     const room = this.rooms[roomId];
 
     if (room) {
-      room.leave(parcipantId);
+      room.leave(participantId);
     }
   }
 }
