@@ -5,10 +5,13 @@ export class Track {
 
   constructor(
     public track: MediaStreamTrack,
-    public receiver: RTCRtpTransceiver
+    public receiver: RTCRtpTransceiver,
   ) {
     track.onReceiveRtp.once((rtp) => {
       this.startPLI(rtp.header.ssrc);
+      if (track.kind == 'video') {
+        console.log(`FrameBytes: ${rtp.payload.byteLength}`);
+      }
     });
   }
 
