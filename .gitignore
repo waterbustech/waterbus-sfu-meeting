@@ -3,3 +3,4 @@ node_modules
 dist
 logs
 app.log
+.DS_Store 
